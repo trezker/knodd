@@ -6,6 +6,12 @@ services:
       - ./user:/usr/src/app
     ports:
       - 5001:8080
+  producer:
+    build: ./producer
+    volumes:
+      - ./producer:/usr/src/app
+    ports:
+      - 5002:8080
   nginx:
     image: nginx:latest
     ports:
@@ -18,3 +24,4 @@ services:
       - ./ssl/key.pem:/etc/nginx/conf.d/key.pem
     depends_on:
       - user
+      - producer
