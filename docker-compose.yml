@@ -1,9 +1,9 @@
 version: '3.6'
 services:
-  web:
-    build: ./web
+  user:
+    build: ./user
     volumes:
-      - ./web:/usr/src/app
+      - ./user:/usr/src/app
     ports:
       - 5001:8080
   nginx:
@@ -17,4 +17,4 @@ services:
       - ./ssl/cert.pem:/etc/nginx/conf.d/cert.pem
       - ./ssl/key.pem:/etc/nginx/conf.d/key.pem
     depends_on:
-      - web
+      - user
