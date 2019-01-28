@@ -6,11 +6,11 @@ const express = require('express');
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
+const signup = require("./signup");
+
 // App
 const app = express();
-app.get('/api/user/Create_user', (req, res) => {
-	res.send('Creating user\n');
-});
+app.get('/api/user/Signup', (req, res) => signup.handler(req, res));
 app.get('/api/user/Login', (req, res) => {
 	res.send('Logging in\n');
 });
