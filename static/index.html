@@ -6,18 +6,26 @@
 	<title>Knodd</title>
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css" />
+	<link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 	<div class="container">
 		<div id="login_form">
 			<h2>Hi, come on in!</h2>
-			<div>
-				<input data-bind="textInput: username" placeholder="Username" />
-				<input data-bind="textInput: password" placeholder="password" type="password" />
+			<div class="form-group">
+				<input class="form-control" data-bind="textInput: username" placeholder="Username" />
 			</div>
-	 		<div class="btn-group">
-				<button data-bind="click: sign_up" class="btn btn-lg btn-info">Sign up</button>
-				<button data-bind="click: sign_in" class="btn btn-lg btn-primary"">Sign in</button>
+			<div class="form-group">
+				<input class="form-control" data-bind="textInput: password" placeholder="password" type="password" />
+			</div>
+	 		<div class="form-group">
+				<button data-bind="click: sign_up" class="btn btn-block btn-md btn-info">Sign up</button>
+			</div>
+			<div class="form-group">
+				<button data-bind="click: sign_in" class="btn btn-block btn-md btn-primary"">Sign in</button>
+			</div>
+			<div  class="form-group" data-bind="visible: failed_sign_up">
+				Could not create account.
 			</div>
 		</div>
 	</div>

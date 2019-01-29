@@ -2,6 +2,7 @@ var loginViewModel = function() {
 	var self = this;
 	self.username = '';
 	self.password = '';
+	self.failed_sign_up = ko.observable(false);
 	self.sign_in = function() {
 		var data = ko.toJS(this);
 		data.model = "user";
@@ -19,8 +20,12 @@ var loginViewModel = function() {
 		data.action = "user/sign_up";
 		ajax_post(data).done(function(returnedData) {
 			console.log(returnedData);
-			if(returnedData == true) {
+			if(returnedData.success == true) {
 				loginViewModel.sign_in();
+			}
+			else
+			{
+				self.failed_sign_up(true);
 			}
 		});
 	};
