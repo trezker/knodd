@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const bodyParser = require('body-parser');
 
 // Constants
 const PORT = 8080;
@@ -10,8 +11,13 @@ const signup = require("./signup");
 
 // App
 const app = express();
-app.get('/api/user/Signup', (req, res) => signup.handler(req, res));
-app.get('/api/user/Login', (req, res) => {
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+
+app.post('/api/user/sign_up', (req, res) => signup.handler(req, res));
+app.get('/api/user/log_in', (req, res) => {
 	res.send('Logging in\n');
 });
 
