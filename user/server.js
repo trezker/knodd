@@ -2,12 +2,39 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mariadb = require('mariadb');
+
+const dbpool = mariadb.createPool({
+	host: 'db', 
+	user:'root', 
+	password: 'example',
+	connectionLimit: 5
+});
+
+async function setup_database() {
+	let conn;
+	try {
+		conn = await dbpool.getConnection();
+		console.log(conn);
+		const rows = await conn.query("SELECT 1 as val");
+		//console.log(rows); //[ {val: 1}, meta: ... ]
+		//const res = await conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
+		//console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+	} catch (err) {
+		throw err;
+	} finally {
+		if (conn) return conn.end();
+	}
+}
+
+setup_database();
 
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-const sign_up = require("./sign_up");
+const sign_up_module = require("./sign_up");
+var sign_up = new sign_up_module.initialize(dbpool);
 
 // App
 const app = express();
