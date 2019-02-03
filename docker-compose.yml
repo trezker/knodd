@@ -4,13 +4,21 @@ services:
     image: mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
       - ./mysqldata:/var/lib/mysql
   user:
-    image: trezker/user:latest
+    build:
+      context: ./user
+    env_file:
+      .env
+    depends_on:
+      - db
   producer:
-    image: trezker/producer:latest
+    build:
+      context: ./producer
+    depends_on:
+      - db
   nginx:
     image: nginx:latest
     ports:
