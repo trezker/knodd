@@ -1,34 +1,32 @@
 module.exports = {
 	initialize: function(dbpool) {
 		var self = this;
-		self.dbpool = dbpool;
+		self.sign_up = new sign_up(dbpool);
 
-		self.handler = function(req, res) {
-			console.log(req.body.username);
-			res.send({ success: false });
+		self.handler = async function(req, res) {
+			var result = await self.sign_up.attempt(req.body.username, req.body.password);
+			console.log(result);
+			res.send(result);
 		}
-	}
-}
-
-async function asyncFunction() {
-	let conn;
-	try {
-		conn = await pool.getConnection();
-		const rows = await conn.query("SELECT 1 as val");
-		console.log(rows); //[ {val: 1}, meta: ... ]
-		const res = await conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-		console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
-	} catch (err) {
-		throw err;
-	} finally {
-		if (conn) return conn.end();
 	}
 }
 
 function sign_up(dbpool) {
 	var self = this;
 	self.dbpool = dbpool;
-	function attempt(username, password) {
-		
+	self.attempt = async function(username, password) {
+		var result = {};
+		let conn;
+		try {
+			conn = await self.dbpool.getConnection();
+			const res = await conn.query("INSERT INTO user (name) value (?)", [username]);
+			result.success = true;
+		} catch (err) {
+			result.success = false;
+		} finally {
+			if (conn)
+				conn.end();
+			return result;
+		}
 	}
 }

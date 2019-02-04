@@ -71,7 +71,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.post('/api/user/sign_up', (req, res) => sign_up.handler(req, res));
+const asyncMiddleware = fn =>
+  (req, res, next) => {
+    Promise.resolve(fn(req, res, next))
+      .catch(next);
+};
+
+app.post('/api/user/sign_up', asyncMiddleware(async (req, res, next) => { await sign_up.handler(req, res); }));
 app.get('/api/user/log_in', (req, res) => {
 	res.send('Logging in\n');
 });
