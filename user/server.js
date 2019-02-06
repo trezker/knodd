@@ -4,28 +4,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mariadb = require('mariadb');
 
+function sleep(ms){
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms)
+    })
+}
 
 async function setup_database() {
-	let dbpool;
-	var success = false;
-	while(!success) {
-		try
-		{
-			dbpool = mariadb.createPool({
-				host: 'db', 
-				user:'root', 
-				password: process.env.DB_ROOT_PASSWORD,
-				connectionLimit: 5
-			});
-			success = true;
-		}
-		catch(err) {
-			console.log("fail");
-		}
-	}
-	console.log("success");
 	let conn;
 	try {
+		await sleep(1000);
+		const dbpool = mariadb.createPool({
+			host: 'db', 
+			user:'root', 
+			password: process.env.DB_ROOT_PASSWORD,
+			connectionLimit: 5
+		});
+
 		conn = await dbpool.getConnection();
 		//console.log(conn);
 		await conn.query(`
@@ -58,9 +53,6 @@ async function setup_database() {
 			)
 			ENGINE=InnoDB
 		`);
-		//console.log(rows); //[ {val: 1}, meta: ... ]
-		//const res = await conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-		//console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
 	} catch (err) {
 		console.log(err);
 		//throw err;
