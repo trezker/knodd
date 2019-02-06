@@ -6,12 +6,24 @@ const mariadb = require('mariadb');
 
 
 async function setup_database() {
-	const dbpool = mariadb.createPool({
-		host: 'db', 
-		user:'root', 
-		password: process.env.DB_ROOT_PASSWORD,
-		connectionLimit: 5
-	});
+	let dbpool;
+	var success = false;
+	while(!success) {
+		try
+		{
+			dbpool = mariadb.createPool({
+				host: 'db', 
+				user:'root', 
+				password: process.env.DB_ROOT_PASSWORD,
+				connectionLimit: 5
+			});
+			success = true;
+		}
+		catch(err) {
+			console.log("fail");
+		}
+	}
+	console.log("success");
 	let conn;
 	try {
 		conn = await dbpool.getConnection();
@@ -32,7 +44,17 @@ async function setup_database() {
 		await conn.query(`
 			CREATE TABLE IF NOT EXISTS user (
 				id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-				name CHAR(64) UNIQUE
+				name VARCHAR(64) UNIQUE
+			)
+			ENGINE=InnoDB
+		`);
+		await conn.query(`
+			CREATE TABLE IF NOT EXISTS credential (
+				id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				user_id BIGINT NOT NULL,
+				type ENUM('password'),
+				value VARCHAR(256) NOT NULL,
+				FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 			)
 			ENGINE=InnoDB
 		`);
@@ -47,7 +69,8 @@ async function setup_database() {
 	}
 }
 
-setup_database();
+(async () => {
+await setup_database();
 
 const dbpool = mariadb.createPool({
 	host: 'db', 
@@ -84,3 +107,4 @@ app.get('/api/user/log_in', (req, res) => {
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
+})();
